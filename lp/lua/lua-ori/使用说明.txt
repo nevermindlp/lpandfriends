@@ -1,0 +1,52 @@
+cgdev.me官方LUA架构版使用简要说明：
+
+1）在此架构中，使用了基于模块（Module）的机制，每个功能独立于 /Module/*.lua中，使用时，请将写好的模块
+放入 Module 文件夹内，然后在 Config.lua 中 useModule("*"); 即可。
+
+2）除了 Config.lua 文件，请不要修改除了 Module 文件夹以外的所有文件，需要自定义扩展库时，请放入 /System/OtherModule
+文件夹中。
+
+3）新增 Delegate 类，该类允许创建事件委托，实现方式请在 /System/BaseModule/Delegate.lua 中查看。
+
+   委托类用于创建一个后期绑定的事件，可以是多个文件进行绑定。
+   例子：假设我创建了 A.lua 和 B.lua 两个模块。
+   在 A.lua 中
+   Delegate.RegDelLoginEvent("ALoginEvent");  --创建登录委托事件
+   
+   function ALoginEvent(player)
+      NLG.SystemMessage(player,"来自A的问候。");
+   end
+
+   在 B.lua 中
+   Delegate.RegDelLoginEvent("BLoginEvent");  --创建登录委托事件
+   
+   function BLoginEvent(player)
+      NLG.SystemMessage(player,"来自B的问候。");
+   end
+
+   在 Config.lua 中添加引用
+   useModule("A");
+   useModule("B");
+   
+   那么，在玩家登录的时候，会同时收到
+   来自A.lua的问候。
+   来自B.lua的问候。
+   委托事件调用的先后顺序，取决于 Config.lua 中的引用顺序。
+
+4）其他例子，请看 /Module 下的两个简单的例子，喇叭(laba.lua)与原地登录(myLogin.lua)。
+
+
+所有委托方法:
+
+*RegInit  /*  NPC，物品初始化时使用 */
+*RegDelTalkEvent 
+*RegDelBattleStartEvent
+*RegDelBattleOverEvent
+*RegDelLoginEvent
+*RegDelLogoutEvent
+*RegDelDropEvent
+*RegDelLoginGateEvent
+*RegDelWarpEvent
+*RegDelAllOutEvent /* 玩家离开事件，包括大登与断线。注：此委托之前也会调用DropEvent或LogoutEvent */
+
+

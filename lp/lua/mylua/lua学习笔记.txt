@@ -1,0 +1,34 @@
+1、变量默认为全局变量，局部变量需要声明为local
+2、注释    --  or  --[[ 
+		   --]]
+3、8个基本类型  nil boolean number string userdata function thread table
+4、type函数可以测试类型
+5、string不可以修改
+6、逻辑运算符 and or 需要特殊注意
+7、链接运算符  ..  pring("Hello" .. "world")
+8、lua函数会有多返回值   string.find
+9、x,y,z = 10,foo2()   -- x=10, y='a', z='b
+10、local_, x = string.find(s, p) 
+    -- now use `x'   虚变量
+11、
+functionnewCounter() 
+locali = 0 
+return function()  -- anonymous function 
+  i = i + 1 
+returni 
+end 
+end 
+c1 = newCounter() 
+print(c1()) --> 1 
+print(c1()) --> 2
+注意最后的输出：这是一个c1而非两个实例
+12、正确的尾调用
+13、虽然我们把Lua当作解释型语言，但是Lua会首先把代码预编译成中间码然后再执
+行（很多解释型语言都是这么做的）
+14、loadstring的使用
+15、require和dofile完成同样的功能但require更好用
+16、我们通过error抛出异常，然后通过pcall捕获他。
+17、table 是Lua中唯一的数据结构
+18、concat要比 .. 效率高
+19、Lua中构造器正是自描述数据格式
+20、全局变量：value = _G[varname]

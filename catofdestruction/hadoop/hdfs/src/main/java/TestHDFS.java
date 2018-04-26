@@ -13,6 +13,7 @@ public class TestHDFS {
     public static void main(String[] args) throws Exception {
 
         Configuration configuration = new Configuration();
+        // 伪分布式需要导入一下两个配置文件
         configuration.addResource(new Path("/usr/local/Cellar/hadoop/3.0.0/libexec/etc/hadoop/core-site.xml"));
         configuration.addResource(new Path("/usr/local/Cellar/hadoop/3.0.0/libexec/etc/hadoop/hdfs-site.xml"));
 

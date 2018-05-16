@@ -1,0 +1,8 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="3.1"
+         metadata-complete="true">
+  <!-- maven 创建的 webapp 需要修改 servlet 版本为3.1 -->
+</web-app>

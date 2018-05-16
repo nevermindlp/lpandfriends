@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.seckill.dao.SuccessKilledDao">
+
+    <insert id="insertSuccessKilled">
+        <!-- 主键冲突（重复插入）：会报错，忽略错误，返回0, 使用ignore关键字 -->
+        INSERT ignore INTO success_killed(seckill_id, user_phone, state)
+        VALUES (#{seckillId}, #{userPhone}, 0)
+    </insert>
+
+    <select id="queryByIdWithSeckill" resultType="SuccessKilled">
+        <!-- 根据id查询SuccessKilled并携带秒杀商品对象实体 -->
+        <!-- 如何告诉mybatis把结果映射到SuccessKilled实体中,
+            同时映射seckillId属性 -->
+        <!-- MyBatis相对于其他OR Mapping框架，最核心的点是  可以自由控制SQL
+            可以最大化工程师的SQL优化技巧 -->
+        SELECT
+          sk.seckill_id,
+          sk.user_phone,
+          sk.create_time,
+          sk.state,
+          s.seckill_id "seckill.seckill_id", /*级联的过程 加双引号是一个表达式*/
+          s.name "seckill.name", /*不加双引号sql不会报错 认为会是一个新的语法*/
+          s.number "seckill.number", /*当数据返回时mybatis会识别出来表达式*/
+          s.start_time "seckill.start_time", /*在structs2中 是ojal表达式*/
+          s.end_time "seckill.end_time", /* 也可以理解成el表达式 */
+          s.create_time "seckill.create_time"
+        FROM success_killed AS sk
+        INNER JOIN
+        seckill AS s
+        ON sk.seckill_id = s.seckill_id
+        WHERE sk.seckill_id=#{seckillId}
+        AND sk.user_phone=#{userPhone}
+    </select>
+</mapper>

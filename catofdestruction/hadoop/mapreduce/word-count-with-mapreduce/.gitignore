@@ -9,3 +9,4 @@ gen
 
 # mac file
 *.DS_Store
+!/word-count-with-mapreduce.iml

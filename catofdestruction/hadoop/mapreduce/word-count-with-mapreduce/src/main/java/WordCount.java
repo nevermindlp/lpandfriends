@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 
 
 /**
- * Created by DeCatOfDestruction on 2018/4/25.
+ * Created by LW on 2018/4/25.
  */
 
 public class WordCount {

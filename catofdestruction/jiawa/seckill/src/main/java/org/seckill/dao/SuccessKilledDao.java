@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Param;
 import org.seckill.entity.SuccessKilled;
 
 /**
- * Created by DeCatOfDestruction on 2018/5/15.
+ * Created by LW on 2018/5/15.
  */
 public interface SuccessKilledDao {
     /**

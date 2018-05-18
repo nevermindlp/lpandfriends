@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Created by DeCatOfDestruction on 2018/4/26.
+ * Created by LW on 2018/4/26.
  */
 public final class WordCount {
 

@@ -1,5 +1,5 @@
 /**
- * Created by DeCatOfDestruction on 2018/4/24.
+ * Created by LW on 2018/4/24.
  */
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;

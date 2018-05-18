@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by DeCatOfDestruction on 2018/5/15.
+ * Created by LW on 2018/5/15.
  */
 public interface SeckillDao {
     /**

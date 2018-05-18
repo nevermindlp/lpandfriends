@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 扫描service包下(包括子包)所有使用注解的类型 -->
+    <context:component-scan base-package="org.seckill.service"/>
+
+    <!-- spring声明式事务配置 -->
+    <!-- 配置事务管理器 -->
+    <!-- mybatis使用jdbc的事务管理器，如果使用hibernate需要配置hibernate相关的 transaction manager-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入数据库的连接池（此处是基于xml注入方式 即属性注入） -->
+        <!-- 此处ide显示为红色 因为在当前容器配置下找不到ref定义的id dataSource
+                之前在spring-dao.xml中已经定义了
+                在整体运行spring的时候需要将spring-dao.xml spring-service.xml都提供
+                spring就会自动找到数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置基于注解的声明式事务（建议使用注解的方式来标注方法 为事务方法） -->
+    <!-- 作用：默认使用注解来管理事务行为 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>

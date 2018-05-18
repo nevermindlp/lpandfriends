@@ -3,7 +3,7 @@ package org.seckill.entity;
 import java.util.Date;
 
 /**
- * Created by DeCatOfDestruction on 2018/5/15.
+ * Created by LW on 2018/5/15.
  */
 public class SuccessKilled {
     private long seckillId;

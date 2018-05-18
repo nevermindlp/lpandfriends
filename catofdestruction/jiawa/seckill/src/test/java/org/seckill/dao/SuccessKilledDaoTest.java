@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 
 /**
- * Created by DeCatOfDestruction on 2018/5/16.
+ * Created by LW on 2018/5/16.
  */
 
 @RunWith(SpringJUnit4ClassRunner.class) // 在junit启动时加载springIOC容器

@@ -8,7 +8,7 @@ import scala.Tuple2;
 import java.util.Arrays;
 
 /**
- * Created by DeCatOfDestruction on 2018/5/10.
+ * Created by LW on 2018/5/10.
  */
 public class WordCount {
 

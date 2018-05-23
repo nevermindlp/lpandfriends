@@ -5,6 +5,7 @@ import org.seckill.enums.SeckillStateEnum;
 
 /**
  * 封装秒杀执行后结果
+ * DTO的主要职责是web层到service层的数据传递
  * Created by LW on 2018/5/17.
  */
 public class SeckillExecution {

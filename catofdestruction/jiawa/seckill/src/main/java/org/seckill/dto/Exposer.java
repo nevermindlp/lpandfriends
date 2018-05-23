@@ -2,6 +2,7 @@ package org.seckill.dto;
 
 /**
  * 暴露秒杀地址DTO
+ * DTO的主要职责是web层到service层的数据传递
  * Created by LW on 2018/5/17.
  */
 public class Exposer {

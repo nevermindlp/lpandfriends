@@ -4,5 +4,24 @@
                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="3.1"
          metadata-complete="true">
-  <!-- maven 创建的 webapp 需要修改 servlet 版本为3.1 -->
+    <!-- maven 创建的 webapp 需要修改 servlet 版本为3.1 -->
+
+    <!-- 配置DispatcherServlet（spring mvc的中央控制器配置） -->
+    <servlet>
+        <servlet-name>seckill-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 配置springMVC 需要加载的配置文件
+             spring-dao.xml spring-service.xml spring-web.xml
+    
+             Mybatis -> spring -> springMVC -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/spring-*.xml</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>seckill-dispatcher</servlet-name>
+        <!-- 默认匹配所有的请求 -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 </web-app>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- 配置spring MVC -->
+    <!-- 1. 开启spring MVC 注解模式
+         简化配置：
+         (1) 自动注册 DefaultAnnotationHandlerMapping(使用注解驱动的Handler映射),
+            AnnotationMethodHandlerAdapter(基于注解方法的Handler适配器) 两个组件 放到spring容器中，可以使用注解映射对应的URL以及提供的方法
+         (2) 默认提供一些列功能：数据绑定，数字和日期的formmat 如@NumberFormat @DateTimeFormat，xml和json的默认读写支持 -->
+    <mvc:annotation-driven/>
+
+    <!-- 2. servlet-mapping 映射路径："/" -->
+    <!-- 静态资源默认servlet配置
+        (1) 加入对静态资源的处理 比如js png gif等
+        (2) 允许使用 "/" 做整体映射
+        -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 3. 配置jsp 显示 ViewResolver -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- 以上三部基本配置完成了springMVC 如果需要其他功能 如拦截器interceptor 数字日期format -->
+
+
+    <!-- 4. 扫描web相关的bean
+         用来将自己开发所有 Controller 放到spring IOC 容器中-->
+    <context:component-scan base-package="org.seckill.web"/>
+
+</beans>

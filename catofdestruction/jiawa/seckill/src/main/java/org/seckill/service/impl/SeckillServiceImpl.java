@@ -2,6 +2,7 @@ package org.seckill.service.impl;
 
 import org.seckill.dao.SeckillDao;
 import org.seckill.dao.SuccessKilledDao;
+import org.seckill.dao.cache.RedisDao;
 import org.seckill.dto.Exposer;
 import org.seckill.dto.SeckillExecution;
 import org.seckill.entity.Seckill;
@@ -29,6 +30,9 @@ import java.util.List;
 public class SeckillServiceImpl implements SeckillService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private RedisDao redisDao;
     // 注入Service依赖（mybatis通过mapper的方式将dao实现并初始化好 放入到了spring容器中 需要获取dao实例注入到Service下面）
 //    @Autowired spring提供的注解 @Resource @Inject j2ee规范提供的注解
     @Autowired // 会在spring容器中查找该类型的dao实例（通过mybatis mapper实现）并注入 不需要new dao
@@ -50,10 +54,33 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public Exposer exportSeckillUrl(long seckillId) {
-        Seckill seckill = this.getById(seckillId);
+
+        /**
+         * 优化点：后端缓存优化
+         * 一致性维护 建立在超时 jedis setex 的基础上（理由：因为秒杀业务的产品 一般情况下 建立好秒杀单就不允许修改了，只能废弃后重新新建）
+         *
+         * 秒杀产品访问量较高
+         * 通过Redis 缓存秒杀对象，降低了数据库的访问量
+         *
+         * 当然，在线上环境 Redis 并非是简单的 Singleton 环境，通常是 一个集群（而不是一台机器）
+         * 而且 访问逻辑的 一致性维护  也不会这么简单   通过超时维护
+         *
+         */
+        // 1. 访问redis 获取对象
+        Seckill seckill = redisDao.getSeckill(seckillId);
         if (seckill == null) {
-            return new Exposer(false, seckillId);
+            // 2. 访问数据库 获取对象
+            seckill = this.getById(seckillId);
+            if (seckill == null) {
+                return new Exposer(false, seckillId);
+            }
+            // 3. 更新缓存
+            String result = redisDao.putSeckill(seckill);
+            logger.info("exportSeckillUrl put cache successfully:  " + result + seckill);
+        } else {
+            logger.info("exportSeckillUrl get cache objet successfully:  " + seckill);
         }
+
         Date startTime = seckill.getStartTime();
         Date endTime = seckill.getEndTime();
         Date nowTime = new Date();

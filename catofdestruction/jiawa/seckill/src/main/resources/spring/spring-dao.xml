@@ -83,4 +83,15 @@
                 通过扫描指定目录下的Dao接口包 达到自动实现Dao接口 实现类 并且注入到spring容器中 -->
         <property name="basePackage" value="org.seckill.dao"/>
     </bean>
+
+
+    <!-- 5. 注入RedisDao -->
+    <!-- 因为Redis 不是Mybatis 数据库的操作，所以不会通过 Mybatis 自动生成dao接口实现类，需要自己注入 -->
+    <bean id="redisDao" class="org.seckill.dao.cache.RedisDao">
+        <!-- 构造方法注入 告诉 RedisDao 这个Bean  必须传递 ip port 构造  -->
+        <!-- 此处是测试环境的redis 线上环境需要把相关配置 放到配置文件 -->
+        <constructor-arg index="0" value="127.0.0.1"/>
+        <constructor-arg index="1" value="6379"/>
+    </bean>
+
 </beans>

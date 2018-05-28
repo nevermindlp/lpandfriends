@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Param;
 import org.seckill.entity.SuccessKilled;
 
 /**
+ *
+ * Dao: 数据访问对象层（存放数据库或者其他存储访问的类/接口）
  * Created by LW on 2018/5/15.
  */
 public interface SuccessKilledDao {

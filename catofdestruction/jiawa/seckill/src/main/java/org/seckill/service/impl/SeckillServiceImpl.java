@@ -116,25 +116,35 @@ public class SeckillServiceImpl implements SeckillService {
         if (md5 == null || !md5.equals(getMD5(seckillId))) {
             throw new SeckillException("seckill data rewrite");
         }
-
+        /**
+         * 执行顺序 初步优化：
+         * spring 事务保证：更新库存 和 插入购买记录 有一个执行失败 都会进行回滚
+         *
+         * 因为
+         * 需要锁的 语句实际上是 update 热点商品（行级锁），insert 不会进行枷锁 可以并发插入
+         *
+         * 所以
+         * 先insert 后update 会减少一次加锁串行时（insert） 的网络延迟+gc 时间
+         * 而 先update 后insert 会增加 网络延迟和gc的时间
+         *
+         */
         // 秒杀业务逻辑：减库存 + 记录购买行为
         Date killDate = new Date();
-        // 减库存
-        int updateCount = seckillDao.reduceNumber(seckillId, killDate);
-
         try {
-            if (updateCount <= 0) {
-                // 没有更新记录，秒杀结束
-                throw new SeckillCloseException("seckill is closed");
+            // 记录购买行为 insert ignore 通过逐渐冲突 不会报错 而是返回0 即重复秒杀
+            int insertCount = successKilledDao.insertSuccessKilled(seckillId, userPhone);
+            // 联合主键唯一：seckillId, userPhone
+            if (insertCount <= 0) {
+                // 重复秒杀
+                throw new RepeatKillException("seckill repeated");
             } else {
-                // 记录购买行为
-                int insertCount = successKilledDao.insertSuccessKilled(seckillId, userPhone);
-                // 联合主键唯一：seckillId, userPhone
-                if (insertCount <= 0) {
-                    // 重复秒杀
-                    throw new RepeatKillException("seckill repeated");
+                // 减库存（热点商品竞争 需要拿到mysql的行级锁）
+                int updateCount = seckillDao.reduceNumber(seckillId, killDate);
+                if (updateCount <= 0) {
+                    // 没有更新记录，秒杀结束（时间到了 或者 没有库存了）===> rollback
+                    throw new SeckillCloseException("seckill is closed");
                 } else {
-                    // 秒杀成功
+                    // 秒杀成功 ===> commit
                     SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId, userPhone);
                     return new SeckillExecution(seckillId, SeckillStateEnum.SUCCESS, successKilled);
                 }

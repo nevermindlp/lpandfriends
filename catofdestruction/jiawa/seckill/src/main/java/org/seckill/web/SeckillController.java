@@ -77,15 +77,15 @@ public class SeckillController {
         return result;
     }
 
-    @RequestMapping(value = "/{seckillId}/{md5}/execution",
-            method = RequestMethod.POST,
-            produces = {"application/json;charset=UTF-8"}) // charset=UTF-8  解决中文乱码问题
-    @ResponseBody // ResponseBody 注解：springMVC会尝试将 返回结果 封装成json
     /**
      * 第三个参数 不是请求参数传递 而是从用户浏览器请求的Cookie中获取（简单的String代替登录模块）
      * 默认情况下  在发现request header中没有所要的 cookie killPhone 时  springMVC 会报错
      * 将 required 设置为false 使得cookie killPhone不是必须的 把 killPhone 的验证逻辑放在程序中进行
      */
+    @RequestMapping(value = "/{seckillId}/{md5}/execution",
+            method = RequestMethod.POST,
+            produces = {"application/json;charset=UTF-8"}) // charset=UTF-8  解决中文乱码问题
+    @ResponseBody // ResponseBody 注解：springMVC会尝试将 返回结果 封装成json
     public SeckillResult<SeckillExecution> execute(@PathVariable("seckillId") Long seckillId,
                                                    @PathVariable("md5") String md5,
                                                    @CookieValue(value = "killPhone", required = false) Long phone) {
@@ -98,7 +98,11 @@ public class SeckillController {
             result = new SeckillResult<SeckillExecution>(true, seckillExecution);
         }
         try {
-            seckillExecution = seckillService.executeSeckill(seckillId, phone, md5);
+//            seckillExecution = seckillService.executeSeckill(seckillId, phone, md5);
+            /**
+             * 使用存储过程 优化方式 执行秒杀
+             */
+            seckillExecution = seckillService.executeSeckillByProcedure(seckillId, phone, md5);
             result = new SeckillResult<SeckillExecution>(true, seckillExecution);
         }  catch (SeckillCloseException e1) {
             seckillExecution = new SeckillExecution(seckillId, SeckillStateEnum.END);

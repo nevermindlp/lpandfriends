@@ -17,6 +17,12 @@ public class SeckillExecution {
     // 秒杀成功记录对象
     private SuccessKilled successKilled;
 
+    /**
+     * 成功时的构造方法
+     * @param seckillId
+     * @param stateEnum
+     * @param successKilled
+     */
     public SeckillExecution(long seckillId, SeckillStateEnum stateEnum, SuccessKilled successKilled) {
         this.seckillId = seckillId;
         this.state = stateEnum.getState();
@@ -24,6 +30,11 @@ public class SeckillExecution {
         this.successKilled = successKilled;
     }
 
+    /**
+     * 失败时的构造方法
+     * @param seckillId
+     * @param stateEnum
+     */
     public SeckillExecution(long seckillId, SeckillStateEnum stateEnum) {
         this.seckillId = seckillId;
         this.state = stateEnum.getState();

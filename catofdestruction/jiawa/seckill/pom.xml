@@ -176,6 +176,14 @@
       <version>1.0.8</version>
     </dependency>
 
+
+    <!-- 7 :common util collection 工具  推荐使用-->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>seckill</finalName>

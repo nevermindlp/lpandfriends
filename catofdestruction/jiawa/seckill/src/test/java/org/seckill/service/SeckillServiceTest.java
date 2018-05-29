@@ -74,4 +74,19 @@ public class SeckillServiceTest {
         }
     }
 
+    @Test
+    public void executeSeckillByProcedure() throws Exception {
+        long seckillId = 1003;
+        long xyPhone = 13810099017L;
+
+        Exposer exposer = seckillService.exportSeckillUrl(seckillId);
+        if (exposer.isExposed()) { // 正在秒杀中
+            logger.info(" 秒杀进行中。。。 exposer= {}", exposer);
+
+            SeckillExecution seckillExecution = seckillService.executeSeckillByProcedure(seckillId, xyPhone, exposer.getMd5());
+            logger.info(" seckillExecution= {}", seckillExecution);
+        } else {
+            logger.info(" 秒杀未开始 或 已结束 exposer= {}", exposer);
+        }
+    }
 }

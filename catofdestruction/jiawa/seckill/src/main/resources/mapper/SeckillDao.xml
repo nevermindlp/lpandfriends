@@ -8,9 +8,9 @@
     <update id="reduceNumber">
         <!-- 具体的sql语句 -->
         UPDATE
-          seckill
+         seckill
         SET
-          number = number - 1
+         number = number - 1
         WHERE seckill_id = #{seckillId}
         AND start_time <![CDATA[ <= ]]> #{killTime}
         AND end_time >= #{killTime}
@@ -28,5 +28,22 @@
         FROM seckill
         ORDER BY create_time DESC
         limit #{offset}, #{limit}
+    </select>
+
+    <!-- 使用mybatis调用存储过程 -->
+    <!-- CALLABLE: JDBC在调用 存储过程时专门开发了 CALLABLE -->
+    <select id="killByProcedure" statementType="CALLABLE">
+        <!-- 传入参数时注意：
+            首先传入dao接口中 Map参数中的key传入
+            然后还需要提供jdbcType
+            最后需要提供参数模式IN/OUT
+             -->
+        call execute_seckill(
+            #{seckillId, jdbcType = BIGINT, mode = IN},
+            #{phone, jdbcType = BIGINT, mode = IN},
+            #{killTime, jdbcType = TIMESTAMP, mode = IN},
+            #{result, jdbcType = INTEGER, mode = OUT}
+        )
+--  TODO: result jdbcType 如果使用INT 会报错 不明白为啥...
     </select>
 </mapper>

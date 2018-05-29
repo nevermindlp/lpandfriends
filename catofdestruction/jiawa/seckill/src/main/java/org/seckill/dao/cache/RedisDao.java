@@ -43,7 +43,9 @@ public class RedisDao {
         // Redis缓存的 存取对象操作（数据访问层的逻辑） 应该放在此dao层
         // 而不应该混入Service层
         try {
-
+            /**
+             * jedis 依赖
+             */
             Jedis jedis = jedisPool.getResource(); // Jedis 类似于数据库的Connection
             try {
                 String key = this.cacheSeckillKey(seckillId);

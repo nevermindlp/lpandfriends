@@ -1,5 +1,6 @@
 package org.seckill.service.impl;
 
+import org.apache.commons.collections.MapUtils;
 import org.seckill.dao.SeckillDao;
 import org.seckill.dao.SuccessKilledDao;
 import org.seckill.dao.cache.RedisDao;
@@ -20,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LW on 2018/5/17.
@@ -97,24 +100,23 @@ public class SeckillServiceImpl implements SeckillService {
         return DigestUtils.md5DigestAsHex(base.getBytes());
     }
 
-    @Override
-    @Transactional
     /**
-     *
      * （声明式事务原理：利用aop技术 在方法头尾添加 begin commit/rollback）
-     *
+     * <p>
      * 使用注解控制事务方法的优点：（不推荐使用advice aop 而是是使用 @Transactional 注解）
      * 1. 开发团队达成一致约定，明确标注事务方法的编程风格
      * 2. 保证事务方法的执行时间尽可能短，尽量不要穿插其他网络操作 RPC/HTTP请求 如：Redis mc
      * 如果还是需要操作网络 缓存 可以将其剥离到 事务方法外部，再做一个更上层的方法 先完成操作后将数据 传入到下层 数据库事务操作方法
      * （因为事务开启后 因为有写入操作会产生锁定 为了降低update等的 锁定操作的时间）
      * 3. 不是所有的方法都需要事务，如只有一条修改操作、只读操作都不需要事务控制，若用advice aop进行全局配置会不灵活
-     *
      */
+    @Override
+    @Transactional
+    /** 使用 spring 声明式事务  通过抛出运行时异常进行事务的commit/rollback **/
     public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
             throws SeckillException, RepeatKillException, SeckillCloseException {
         if (md5 == null || !md5.equals(getMD5(seckillId))) {
-            throw new SeckillException("seckill data rewrite");
+            throw new SeckillException(SeckillStateEnum.DATA_REWRITE.getStateInfo());
         }
         /**
          * 执行顺序 初步优化：
@@ -136,13 +138,13 @@ public class SeckillServiceImpl implements SeckillService {
             // 联合主键唯一：seckillId, userPhone
             if (insertCount <= 0) {
                 // 重复秒杀
-                throw new RepeatKillException("seckill repeated");
+                throw new RepeatKillException(SeckillStateEnum.REPEAT_KILL.getStateInfo());
             } else {
                 // 减库存（热点商品竞争 需要拿到mysql的行级锁）
                 int updateCount = seckillDao.reduceNumber(seckillId, killDate);
                 if (updateCount <= 0) {
                     // 没有更新记录，秒杀结束（时间到了 或者 没有库存了）===> rollback
-                    throw new SeckillCloseException("seckill is closed");
+                    throw new SeckillCloseException(SeckillStateEnum.END.getStateInfo());
                 } else {
                     // 秒杀成功 ===> commit
                     SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId, userPhone);
@@ -154,11 +156,54 @@ public class SeckillServiceImpl implements SeckillService {
         } catch (RepeatKillException e2) {
             throw e2;
         } catch (Exception e) {
-            // 除了已知异常 还可能会出现 Dao可能出现插入超时 数据库连接池断了等异常
-            // 把所有编译期异常 转换成运行期异常（业务异常）
-            // spring 声明式事务会做rollback 为了防止 减库存操作 和 记录购买行为操作 没有同时执行
+            /**
+             * 除了已知异常 还可能会出现 Dao插入超时 数据库连接池断开 等异常
+             * 把所有编译期异常 转换成 运行期异常（业务异常）
+             * spring 声明式事务会做rollback（只针对 运行期异常 // SeckillException extends RuntimeException）
+             * 为了防止 减库存操作 和 记录购买行为操作 没有同时执行
+             */
             logger.error(e.getMessage(), e);
-            throw new SeckillException("seckill inner error:" + e.getMessage());
+            throw new SeckillException(SeckillStateEnum.INNER_ERROR.getStateInfo() + e.getMessage());
+        }
+    }
+
+    /**
+     * 使用 mysql存储过程进行优化
+     * <p>
+     * 存储过程中逻辑代码进行 事务处理 commit/rollback（而非spring声明式事务 因此不需要抛出运行时异常 直接返回 SeckillExecution）
+     */
+    @Override
+    public SeckillExecution executeSeckillByProcedure(long seckillId, long userPhone, String md5) {
+        if (md5 == null || !md5.equals(getMD5(seckillId))) {
+            return new SeckillExecution(seckillId, SeckillStateEnum.DATA_REWRITE);
+        }
+        Date killDate = new Date();
+
+        // 使用Map参数是因为 要把放到result 也放入Map中
+        // 通过mapper中CALLABLE方法 告诉mysql 当存储过程执行完成之后 result 被赋值
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("seckillId", seckillId);
+        map.put("phone", userPhone);
+        map.put("killTime", killDate);
+        map.put("result", null);
+
+        try {
+            seckillDao.killByProcedure(map);
+            /**
+             * commons-collections 依赖
+             */
+            // 没有值给-2 表示出错
+            Integer result = MapUtils.getInteger(map, "result", -2);
+            if (result == 1) { // 秒杀成功W
+                SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId, userPhone);
+                return new SeckillExecution(seckillId, SeckillStateEnum.SUCCESS, successKilled);
+            } else { // 其他错误 通过 SeckillStateEnum.stateOf 返回
+                return new SeckillExecution(seckillId, SeckillStateEnum.stateOf(result));
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return new SeckillExecution(seckillId, SeckillStateEnum.INNER_ERROR);
         }
     }
 }

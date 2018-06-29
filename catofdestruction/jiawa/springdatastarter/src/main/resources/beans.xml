@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="username" value="root"/>
+        <property name="password" value="dahuang"/>
+        <property name="url" value="jdbc:mysql:///spring_data"/>
+    </bean>
+
+    <!-- 将上面配置的dataSource 注入到JdbcTemplate中 因为是引用 所以不能用value 而是ref -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 通过set方法注入 jdbcTemplate -->
+    <bean id="studentDao" class="com.lw.dao.StudentDaoSpringJdbcImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+</beans>

@@ -29,13 +29,13 @@ public class EmployeeService {
     }
 
     @Transactional
-    void updateNameById(Integer id, String name) {
+    public void updateNameById(Integer id, String name) {
 
         emplyeeRepository.updateNameById(id, name);
     }
 
     @Transactional
-    void removeById(Integer id) {
+    public void removeById(Integer id) {
 
         emplyeeRepository.removeById(id);
     }

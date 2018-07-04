@@ -1,6 +1,7 @@
 package com.lw.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 雇员 先开发实体类 => 自动生成数据表
@@ -9,13 +10,18 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "test_employee_lw")
-public class Employee {
+@Table(name = "test_lw_multiKeys3", schema = "spring_data")
+@IdClass(EmployeeMultiKeysClass.class)
+public class Employee implements Serializable {
     private Integer id;
     private String name;
     private Integer age;
+    private Address address;
 
-    @GeneratedValue
+    public Employee() {
+    }
+
+//    @GeneratedValue
     @Id
     public Integer getId() {
         return id;
@@ -25,6 +31,7 @@ public class Employee {
         this.id = id;
     }
 
+    @Id
     @Column(length = 20, nullable = false)
     public String getName() {
         return name;
@@ -43,12 +50,21 @@ public class Employee {
         this.age = age;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
+                ", address=" + address +
                 '}';
     }
 }

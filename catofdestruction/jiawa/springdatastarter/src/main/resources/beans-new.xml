@@ -20,7 +20,7 @@
         <property name="jpaVendorAdapter" >
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
-        <property name="packagesToScan" value="com.lw"/>
+        <property name="packagesToScan" value="com.lw.domain"/>
 
         <property name="jpaProperties">
             <props>
@@ -43,7 +43,7 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- 5. 配置Spring Data -->
-    <jpa:repositories base-package="com.lw" entity-manager-factory-ref="entityManagerFactory"/>
+    <jpa:repositories base-package="com.lw.repository" entity-manager-factory-ref="entityManagerFactory"/>
 
     <!-- 扫描com.lw包下的所有注解 放到Spring IOC容器中 -->
     <context:component-scan base-package="com.lw"/>

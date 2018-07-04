@@ -47,6 +47,7 @@ public class EmplyeeCrudRepositoryTest {
         Employee employee = null;
         for (int i = 0; i < 100; i++) {
             employee = new Employee();
+            employee.setId(i+1);
             employee.setName("employee" + (i + 1));
             employee.setAge(100 - i);
             employees.add(employee);

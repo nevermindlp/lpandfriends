@@ -1,6 +1,7 @@
 package com.lw.repository;
 
 import com.lw.domain.Employee;
+import com.lw.domain.EmployeeMultiKeysClass;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 
 //@RepositoryDefinition(domainClass = Employee.class, idClass = Integer.class)
-public interface EmplyeeRepository extends Repository<Employee, Integer> {
+public interface EmplyeeRepository extends Repository<Employee, EmployeeMultiKeysClass> {
 
     public Employee findByName(String name);
 

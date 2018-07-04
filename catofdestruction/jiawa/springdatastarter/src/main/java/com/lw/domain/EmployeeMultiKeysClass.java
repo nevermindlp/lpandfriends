@@ -6,8 +6,13 @@ import java.io.Serializable;
  * Created by LW on 2018/7/4.
  */
 
-// TODO: https://blog.csdn.net/qq_35056292/article/details/77892012
-// TODO: 使用联合主键时 不能使用 @GeneratedValue 否则会报错
+/*
+* TODO: https://blog.csdn.net/qq_35056292/article/details/77892012
+* TODO: 使用联合主键时 不能使用 @GeneratedValue AUTO 否则会报错
+* TODO: 可以使用 @GeneratedValue + @GenericGenerator https://www.imooc.com/video/10077/0
+* TODO: 复合主键还可以使用 @EmbeddedId https://www.objectdb.com/java/jpa/entity/id   https://www.imooc.com/video/10081/0
+*
+* */
 public class EmployeeMultiKeysClass implements Serializable {
     private Integer id;
     private String name;

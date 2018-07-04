@@ -1,5 +1,7 @@
 package com.lw.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -10,18 +12,20 @@ import java.io.Serializable;
  */
 
 @Entity
-@Table(name = "test_lw_multiKeys3", schema = "spring_data")
+@Table(name = "test_lw_multiKeys6", schema = "spring_data")
 @IdClass(EmployeeMultiKeysClass.class)
 public class Employee implements Serializable {
     private Integer id;
     private String name;
     private Integer age;
     private Address address;
+    private double salary;
 
     public Employee() {
     }
 
-//    @GeneratedValue
+    @GeneratedValue(generator = "multiID")
+    @GenericGenerator(name = "multiID", strategy = "assigned")
     @Id
     public Integer getId() {
         return id;
@@ -58,6 +62,15 @@ public class Employee implements Serializable {
         this.address = address;
     }
 
+    @Transient
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
@@ -65,6 +78,7 @@ public class Employee implements Serializable {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", address=" + address +
+                ", salary=" + salary +
                 '}';
     }
 }

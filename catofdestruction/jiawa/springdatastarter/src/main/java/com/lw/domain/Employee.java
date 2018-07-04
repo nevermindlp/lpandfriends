@@ -12,11 +12,13 @@ import java.io.Serializable;
  */
 
 @Entity
-@Table(name = "test_lw_multiKeys6", schema = "spring_data")
+@Table(name = "test_lw_multi_keys7", schema = "spring_data")
 @IdClass(EmployeeMultiKeysClass.class)
 public class Employee implements Serializable {
     private Integer id;
     private String name;
+    // one to one
+    private IDCard idCard;
     private Integer age;
     private Address address;
     private double salary;
@@ -71,11 +73,22 @@ public class Employee implements Serializable {
         this.salary = salary;
     }
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cardID", unique = true)
+    public IDCard getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(IDCard idCard) {
+        this.idCard = idCard;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", idCard=" + idCard +
                 ", age=" + age +
                 ", address=" + address +
                 ", salary=" + salary +

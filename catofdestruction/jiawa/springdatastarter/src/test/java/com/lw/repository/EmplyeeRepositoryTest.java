@@ -52,7 +52,7 @@ public class EmplyeeRepositoryTest {
     @Test
     public void findByNameStartingWithAndAgeLessThan() throws Exception {
         List<Employee> employees =
-                emplyeeRepository.findByNameStartingWithAndAgeLessThan("test", 22);
+                emplyeeRepository.findByNameStartingWithAndAgeLessThan("Emp", 22);
         employees.forEach(employee -> {
             System.out.println(employee);
         });
@@ -99,7 +99,7 @@ public class EmplyeeRepositoryTest {
     @Test
     public void queryNameLike1() throws Exception {
         List<Employee> employees =
-                emplyeeRepository.queryNameLike1("Jack");
+                emplyeeRepository.queryNameLike1("Emp");
         employees.forEach(System.out::println);
     }
 

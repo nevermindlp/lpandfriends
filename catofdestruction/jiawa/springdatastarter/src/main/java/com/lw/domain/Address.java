@@ -11,6 +11,15 @@ public class Address {
     private String address;
     private String phone;
 
+    public Address() {
+    }
+
+    public Address(String postCode, String address, String phone) {
+        this.postCode = postCode;
+        this.address = address;
+        this.phone = phone;
+    }
+
     public String getPostCode() {
         return postCode;
     }

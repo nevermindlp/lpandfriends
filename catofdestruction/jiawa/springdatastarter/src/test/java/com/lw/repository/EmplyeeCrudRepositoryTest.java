@@ -1,6 +1,8 @@
 package com.lw.repository;
 
+import com.lw.domain.Address;
 import com.lw.domain.Employee;
+import com.lw.domain.IDCard;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,11 +47,25 @@ public class EmplyeeCrudRepositoryTest {
         ArrayList<Employee> employees = new ArrayList<>();
 
         Employee employee = null;
+        Address address = null;
+        IDCard idCard = null;
+
         for (int i = 0; i < 100; i++) {
+            String name = "employee" + (i + 1);
+
+            address = new Address("100091", "addr" + (i+1), "13810099999");
+            int cardidSuffix = 100 + (i + 1);
+            idCard = new IDCard("110105198804019" + cardidSuffix, name);
+
             employee = new Employee();
             employee.setId(i+1);
-            employee.setName("employee" + (i + 1));
+            employee.setName(name);
             employee.setAge(100 - i);
+
+            employee.setAddress(address);
+
+            employee.setIdCard(idCard);
+
             employees.add(employee);
         }
         emplyeeCrudRepository.save(employees);

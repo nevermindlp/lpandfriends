@@ -52,14 +52,14 @@ public class EmployeeJpaSpecificationExecutorRepositoryTest {
 
         Specification<Employee> specification = (root, query, cb) -> {
             Path path = root.get("age");
-            Predicate predicate = cb.gt(path, 52);
+            Predicate predicate = cb.gt(path, 80);
             return predicate;
         };
 
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "id");
         Sort sort = new Sort(order);
 
-        Pageable pageable = new PageRequest(0, 20, sort);
+        Pageable pageable = new PageRequest(0, 8, sort);
         Page<Employee> page = employeeJpaSpecificationExecutorRepository.findAll(specification, pageable);
 
         System.out.println(page.getNumber() + 1 + " of " + page.getTotalPages() +

@@ -2,31 +2,33 @@ package com.lw.domain;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
- * Created by LW on 2018/7/4.
+ * Created by LW on 2018/7/5.
  */
+
 @Entity
-public class IDCard {
+@Table(name = "test_lw_idcard")
+public class IdCard implements Serializable {
+
     private String cardID;
-    private String name;
+    private String cardInfo;
+    private Employee employee;
 
-    public IDCard() {
+    public IdCard() {
     }
 
-    public IDCard(String cardID, String name) {
+    public IdCard(String cardID, String cardInfo) {
         this.cardID = cardID;
-        this.name = name;
+        this.cardInfo = cardInfo;
     }
 
-    @GeneratedValue(generator = "cardID")
-    @GenericGenerator(name = "cardID", strategy = "assigned")
     @Id
-    @Column(length = 18, nullable = false)
+//    @GeneratedValue(generator = "cccid") // detached entity passed to persist
+    @GenericGenerator(name = "cardIDGO", strategy = "assigned")
+    @Column(length = 18)
     public String getCardID() {
         return cardID;
     }
@@ -35,11 +37,29 @@ public class IDCard {
         this.cardID = cardID;
     }
 
-    public String getName() {
-        return name;
+    public String getCardInfo() {
+        return cardInfo;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCardInfo(String cardInfo) {
+        this.cardInfo = cardInfo;
+    }
+
+    @OneToOne(mappedBy = "idCard")
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return "IdCard{" +
+                "cardID='" + cardID + '\'' +
+                ", cardInfo='" + cardInfo + '\'' +
+//                ", employee=" + employee + // FIXME: 2018/7/10 互相引用如果重写toString 属性 会有问题  java.lang.StackOverflowError
+                '}';
     }
 }

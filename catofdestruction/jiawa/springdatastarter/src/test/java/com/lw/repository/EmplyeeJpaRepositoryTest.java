@@ -1,6 +1,5 @@
 package com.lw.repository;
 
-import com.lw.domain.Employee;
 import com.lw.domain.EmployeeMultiKeysClass;
 import org.junit.After;
 import org.junit.Before;
@@ -45,11 +44,11 @@ public class EmplyeeJpaRepositoryTest {
         multiKeysClass.setId(1);
         multiKeysClass.setName("employee1");
 
-        Employee employee = emplyeeJpaRepository.findOne(multiKeysClass);
-        System.out.println(employee);
-
-        System.out.println("====>" + emplyeeJpaRepository.exists(multiKeysClass));
-//        System.out.println("====>" + emplyeeJpaRepository.exists(10000));
-//        System.out.println("====>" + emplyeeJpaRepository.exists(10));
+//        Employee employee = emplyeeJpaRepository.findOne(multiKeysClass);
+//        System.out.println(employee);
+//
+//        System.out.println("====>" + emplyeeJpaRepository.exists(multiKeysClass));
+        System.out.println("====>" + emplyeeJpaRepository.exists(10000));
+        System.out.println("====>" + emplyeeJpaRepository.exists(10));
     }
 }

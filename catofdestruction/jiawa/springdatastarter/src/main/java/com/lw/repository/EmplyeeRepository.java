@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 //@RepositoryDefinition(domainClass = Employee.class, idClass = Integer.class)
-public interface EmplyeeRepository extends Repository<Employee, EmployeeMultiKeysClass> {
+public interface EmplyeeRepository extends Repository<Employee, Integer/*EmployeeMultiKeysClass*/> {
 
     public Employee findByName(String name);
 

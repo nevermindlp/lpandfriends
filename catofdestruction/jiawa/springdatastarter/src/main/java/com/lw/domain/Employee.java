@@ -1,9 +1,8 @@
 package com.lw.domain;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * 雇员 先开发实体类 => 自动生成数据表
@@ -12,22 +11,33 @@ import java.io.Serializable;
  */
 
 @Entity
-@Table(name = "test_lw_multi_keys7", schema = "spring_data")
-@IdClass(EmployeeMultiKeysClass.class)
+@Table(name = "test_lw_multi_keys8", schema = "spring_data")
+//@IdClass(EmployeeMultiKeysClass.class)
 public class Employee implements Serializable {
     private Integer id;
     private String name;
-    // one to one
-    private IDCard idCard;
     private Integer age;
+
+    // Embeddable
     private Address address;
+    // Transient
     private double salary;
+
+    // one to one
+    private IdCard idCard;
+
+    // many to one
+    private Leader leader;
+
+    // many to many
+    private Set<Role> roles;
 
     public Employee() {
     }
 
-    @GeneratedValue(generator = "multiID")
-    @GenericGenerator(name = "multiID", strategy = "assigned")
+//    @GeneratedValue(generator = "multiID")
+//    @GenericGenerator(name = "multiID", strategy = "assigned")
+    @GeneratedValue
     @Id
     public Integer getId() {
         return id;
@@ -37,7 +47,7 @@ public class Employee implements Serializable {
         this.id = id;
     }
 
-    @Id
+//    @Id
     @Column(length = 20, nullable = false)
     public String getName() {
         return name;
@@ -74,13 +84,35 @@ public class Employee implements Serializable {
     }
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cardID", unique = true)
-    public IDCard getIdCard() {
+    @JoinColumn(name = "cid", unique = true)
+    public IdCard getIdCard() {
         return idCard;
     }
 
-    public void setIdCard(IDCard idCard) {
+    public void setIdCard(IdCard idCard) {
         this.idCard = idCard;
+    }
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "lid", referencedColumnName = "leaderId")
+    public Leader getLeader() {
+        return leader;
+    }
+
+    public void setLeader(Leader leader) {
+        this.leader = leader;
+    }
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "employee_role",
+            joinColumns = {@JoinColumn(name = "eid")},
+            inverseJoinColumns = {@JoinColumn(name = "rid")})
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -88,10 +120,12 @@ public class Employee implements Serializable {
         return "Employee{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", idCard=" + idCard +
                 ", age=" + age +
                 ", address=" + address +
                 ", salary=" + salary +
+                ", idCard=" + idCard +
+                ", leader=" + leader +
+//                ", roles=" + roles +
                 '}';
     }
 }

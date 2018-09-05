@@ -41,8 +41,12 @@ public class Leader {
         this.leaderName = leaderName;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "lid")
+    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "lid")
+//    @JoinColumn(name = "leader_id", referencedColumnName = "task_id", table = "leader_task")
+    @JoinTable(name = "leader_task",
+            joinColumns = {@JoinColumn(name = "lid")},
+            inverseJoinColumns = {@JoinColumn(name = "tid")})
     public Set<Task> getTasks() {
         return tasks;
     }

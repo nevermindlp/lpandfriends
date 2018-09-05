@@ -22,6 +22,7 @@ public class EmplyeeCrudRepositoryTest {
      */
     private ApplicationContext context = null;
     private EmplyeeCrudRepository emplyeeCrudRepository = null;
+    private TaskRepository taskRepository = null;
 
     /**
      * 通过Junit 中的 @Before 注解 在setup方法中 初始化 ApplicationContext
@@ -30,6 +31,8 @@ public class EmplyeeCrudRepositoryTest {
     public void setup() {
         context = new ClassPathXmlApplicationContext("beans-new.xml");
         emplyeeCrudRepository = context.getBean(EmplyeeCrudRepository.class);
+
+        taskRepository = context.getBean(TaskRepository.class);
         System.out.println("setup");
     }
 
@@ -70,6 +73,9 @@ public class EmplyeeCrudRepositoryTest {
         tasks.add(new Task("task1"));
         tasks.add(new Task("task2"));
         tasks.add(new Task("task3"));
+        taskRepository.save(tasks);
+
+
         leader.setTasks(tasks);
 
         Employee employee = null;
